@@ -8,7 +8,7 @@ class KbcTest implements ActionListener {
     JButton b1, b2;
     JLabel lb1, lb2;
     ButtonGroup bg;
-    String ques[] = { "who developed java?", "capitol of italy", };
+    String ques[] = {};
     String op1[] = { "Tim", "peris" };
     String op2[] = { "steve", "Delhi" };
     String op3[] = { "mark", "Rome" };
@@ -21,7 +21,7 @@ class KbcTest implements ActionListener {
         fr.setLayout(null);
         fr.setSize(600, 600);
         Container c = fr.getContentPane();
-        c.setBackground(Color.cyan);
+        c.setBackground(Color.lightGray);
 
         lb1 = new JLabel(ques[0]);
         lb1.setBounds(50, 50, 300, 30);
