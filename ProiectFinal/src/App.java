@@ -1,47 +1,84 @@
+import javax.imageio.plugins.tiff.ExifGPSTagSet;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
 class KbcTest implements ActionListener {
-    JFrame fr;
+    JFrame game, menu;
     JRadioButton rb1, rb2, rb3, rb4;
-    JButton b1, b2;
+    JButton b1, b2, exitButton;
     JLabel lb1, lb2;
+    JLabel scoreLabel;
     ButtonGroup bg;
-    String ques[] = {"Soarele este o planetă, sau o stea?", "Cine a scris cartea Ciuleandra?", "De câti jucători este nevoie într-p echipăde rugbi?",
-    "Câti ani a durat Războiul de 100 de ani?", "Cum se numeste celebra batalie in care a fost invins Napoleon"};
+    String questions[] = {"Soarele este o planetă, sau o stea?", "Cine a scris cartea Ciuleandra?", "De câți jucători este nevoie într-p echipăde rugbi?",
+    "Câți ani a durat Războiul de 100 de ani?", "Cum se numește celebra bătălie în care a fost învins Napoleon"};
     String op1[] = { "Stea", "Liviu Rebreanu", "12", "100", "Waterloo"};
-    String op2[] = { "Planet[", "Ion Creangă", "13", "101", "Madrid"};
-    String op3[] = { "Mini planeta", "Mihai Eminescu", "14", "103", "Roma"};
-    String op4[] = { "", "George Bacovia", "15" , "116", "Paris"};
+    String op2[] = { "Planetă", "Ion Creangă", "13", "101", "Madrid"};
+    String op3[] = { "Mini planetă", "Mihai Eminescu", "14", "103", "Roma"};
+    String op4[] = { "Mega planetă", "George Bacovia", "15" , "116", "Paris"};
     String ans[] = { "Stea", "Liviu Rebreanu", "15", "116", "Waterloo"};
-    int cn;
+    int cn, Score, countQuestion = 0, questionNumber = questions.length;
 
     KbcTest() {
-        fr = new JFrame();
-        fr.setLayout(null);
-        fr.setSize(800, 800);
-        Container c = fr.getContentPane();
-        c.setBackground(Color.lightGray);
+        // crearea meniului de start
+        menu = new JFrame();
+        menu.setTitle("Meniu - Joc");
+        menu.setLayout(null);
+        menu.setSize(800, 800);
+        menu.setLocationRelativeTo(null);
+        menu.setVisible(true);
+        Container cMenu = menu.getContentPane();
+        cMenu.setBackground(Color.lightGray);
+        b1 = new JButton("Start joc");
+        exitButton = new JButton("Ieșire");
+        b1.setBounds(350, 400, 150, 30);
+        exitButton.setBounds(350, 430, 150, 30);
+        exitButton.addActionListener(this);
+        b1.addActionListener(this);
+        menu.add(b1);
+        menu.add(exitButton);
 
-        lb1 = new JLabel(ques[0]);
+        // crearea intrefetei quizului
+        game = new JFrame();
+        game.setTitle("Joc");
+        game.setLayout(null);
+        game.setSize(800, 800);
+        Container cGame = game.getContentPane();
+        game.setLocationRelativeTo(null);
+        cGame.setBackground(Color.lightGray);
+
+        // crearea zonei de scor
+        scoreLabel = new JLabel("Scor: 0");
+        scoreLabel.setBounds(50, 50, 150, 30);
+        game.add(scoreLabel);
+
+        // label pentru intrebare
+        lb1 = new JLabel(questions[0]);
         lb1.setBounds(200, 50, 800, 30);
-        fr.add(lb1);
+        game.add(lb1);
         lb1.setFont(new Font("Serif", Font.BOLD, 30));
 
+        //prima varianta de raspuns
         rb1 = new JRadioButton(op1[0]);
         rb1.setBounds(200, 120, 150, 30);
-        fr.add(rb1);
-
+        game.add(rb1);
+        
+        // a doua varianta de raspuns
         rb2 = new JRadioButton(op2[0]);
         rb2.setBounds(400, 120, 150, 30);
-        fr.add(rb2);
+        game.add(rb2);
+
+        // a treia varianta de raspuns
         rb3 = new JRadioButton(op3[0]);
         rb3.setBounds(200, 200, 150, 30);
-        fr.add(rb3);
+        game.add(rb3);
+
+        // a patra varianta de raspuns
         rb4 = new JRadioButton(op4[0]);
         rb4.setBounds(400, 200, 150, 30);
-        fr.add(rb4);
+        game.add(rb4);
+        
+        //adaugarea elementelor care vor compune interfata grafica
         bg = new ButtonGroup();
         bg.add(rb1);
         bg.add(rb2);
@@ -51,17 +88,16 @@ class KbcTest implements ActionListener {
         rb2.addActionListener(this);
         rb3.addActionListener(this);
         rb4.addActionListener(this);
-
-        b1 = new JButton("Verifică răspunsul");
-        b1.setBounds(200, 400, 150, 30);
-        fr.add(b1);
+        
     
+        //buton pentru trecerea la intrebarea urmatoare
         b2 = new JButton("Mai departe");
         b2.setBounds(350, 400, 150, 30);
-        fr.add(b2);
-        b1.addActionListener(this);
+        game.add(b2);
+        // b1.addActionListener(this);
         b2.addActionListener(this);
-        fr.setVisible(true);
+        // game.setVisible(true);
+        // menu.setVisible(true);
     }
 
     public static void main(String s[]) {
@@ -71,6 +107,13 @@ class KbcTest implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == b1) {
+            game.setVisible(true);
+            menu.dispose();
+        } else if (e.getSource() == exitButton) {
+            menu.dispose();
+        }
+        if (e.getSource() == b2) {
+            countQuestion++;
 
             String en = "";
             if (rb1.isSelected())
@@ -81,14 +124,19 @@ class KbcTest implements ActionListener {
                 en = rb3.getText();
             if (rb4.isSelected())
                 en = rb4.getText();
-            if (en.equals(ans[cn]))
+            if (en.equals(ans[cn])) { // afisarea unei ferestre de dialog care precizeaza daca s-a raspuns corect sau gresit la intrebare
                 JOptionPane.showMessageDialog(null, "Răspuns corect");
-            else
-                JOptionPane.showMessageDialog(null, "Răspuns greșit");
-        }
-        if (e.getSource() == b2) {
+                Score++;
+                scoreLabel.setText("Scor: " + Score);
+            }
+            else 
+                JOptionPane.showMessageDialog(null, "Răspuns greșit\nRăspuns corect " + ans[cn]);
+            if (countQuestion == questionNumber) { // verificarea daca s-a ajuns al ultima intrebare
+                JOptionPane.showMessageDialog(null, "Ai răspuns corect la " + Score + "/" + questionNumber + "întrebări");
+            }
+            // urmatoarea intrebare
             cn++;
-            lb1.setText(ques[cn]);
+            lb1.setText(questions[cn]);
             rb1.setText(op1[cn]);
             rb2.setText(op2[cn]);
             rb3.setText(op3[cn]);
